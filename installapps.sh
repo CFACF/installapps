@@ -27,58 +27,53 @@ var_net="dhcp"
 # Fetch the next available ID dynamically
 CT_ID=$(pvesh get /cluster/nextid)
 
-# Container creation settings
-echo "Using Default Settings"
-echo "Using Distribution: $var_os"
-echo "Using $var_os Version: $var_version"
-echo "Using Container Type: 1"
-echo "Using Root Password: Automatic Login"
-echo "Using Container ID: $CT_ID"
-echo "Using Hostname: unifiedapp"
-echo "Using Disk Size: $var_disk GB"
-echo "Allocated Cores: $var_cpu"
-echo "Allocated RAM: $var_ram MB"
-echo "Using Bridge: $var_brg"
-echo "Using Static IP Address: $var_net"
+function default_settings() {
+  echo "Using Default Settings"
+  echo "Using Distribution: $var_os"
+  echo "Using $var_os Version: $var_version"
+  echo "Using Container Type: 1"
+  echo "Using Root Password: Automatic Login"
+  echo "Using Container ID: $CT_ID"
+  echo "Using Hostname: unifiedapp"
+  echo "Using Disk Size: $var_disk GB"
+  echo "Allocated Cores: $var_cpu"
+  echo "Allocated RAM: $var_ram MB"
+  echo "Using Bridge: $var_brg"
+  echo "Using Static IP Address: $var_net"
+  echo "Using Gateway IP Address: Default"
+  echo "Using Apt-Cacher IP Address: Default"
+  echo "Disable IPv6: No"
+  echo "Using Interface MTU Size: Default"
+  echo "Using DNS Search Domain: Host"
+  echo "Using DNS Server Address: Host"
+  echo "Using MAC Address: Default"
+  echo "Using VLAN Tag: Default"
+  echo "Enable Root SSH Access: No"
+  echo "Enable Verbose Mode: No"
+}
+
+default_settings
 
 # Start the container creation
 start
 
-# Installation Functions
-function install_bazarr() {
-  APP="Bazarr"
-  build_container
-  description
-  echo -e "${APP} should be reachable at http://${IP}:6767\\n"
-}
-
-function install_prowlarr() {
-  APP="Prowlarr"
-  build_container
-  description
-  echo -e "${APP} should be reachable at http://${IP}:9696\\n"
-}
-
-function install_radarr() {
-  APP="Radarr"
-  build_container
-  description
-  echo -e "${APP} should be reachable at http://${IP}:7878\\n"
-}
-
-function install_sonarr() {
-  APP="Sonarr"
-  build_container
-  description
-  echo -e "${APP} should be reachable at http://${IP}:8989\\n"
+# Installation Functions for each app
+function install_app() {
+  APP=$1
+  PORT=$2
+  build_container  # assuming this function is defined and works correctly
+  description  # assuming this function is defined and works correctly
+  echo -e "${APP} should be reachable at http://${IP}:${PORT}\\n"
 }
 
 # Execute Installations
-install_bazarr
-install_prowlarr
-install_radarr
-install_sonarr
+install_app "Bazarr" "6767"
+install_app "Prowlarr" "9696"
+install_app "Radarr" "7878"
+install_app "Sonarr" "8989"
 
 echo "All services are installed successfully in a single container."
 msg_ok "Completed Successfully!"
+exit 0  # Properly using exit with a numeric status
+
 
